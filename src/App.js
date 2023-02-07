@@ -1,15 +1,15 @@
 import "./App.css";
 import React from "react";
 const numbers = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0];
-const operations = ["=", "+", "-", "÷", "×"];
+const operations = ["=", "+", "-", "/", "*"];
 class App extends React.Component {
   state = {
-    lastPressed: undefined,
     currentNumber: "0",
-    previousNumber: undefined,
+    calc: undefined,
+    operation: undefined,
   };
   handleClick = (e) => {
-    const { lastPressed, currentNumber, previousNumber } = this.state;
+    const { currentNumber, calc, operation } = this.state;
     const { innerText } = e.target;
 
     if (!Number.isNaN(Number(innerText))) {
@@ -22,12 +22,14 @@ class App extends React.Component {
           currentNumber: currentNumber + innerText,
         });
       }
+      return;
     }
     switch (innerText) {
       case "AC": {
         this.setState({
           currentNumber: "0",
-          previousNumber: undefined,
+          calc: undefined,
+          operation: undefined,
         });
         break;
       }
@@ -39,17 +41,41 @@ class App extends React.Component {
         }
         break;
       }
+      default: {
+        if (!operation) {
+          this.setState({
+            operation: innerText,
+            calc: currentNumber,
+            currentNumber: "0",
+          });
+        } else if (innerText === "=") {
+          const evaluated = eval(`${calc} ${operation} ${currentNumber}`);
+          this.setState({
+            operation: undefined,
+            calc: evaluated,
+            currentNumber: evaluated,
+          });
+        } else {
+          const evaluated = eval(`${calc} ${operation} ${currentNumber}`);
+          this.setState({
+            operation: innerText,
+            calc: evaluated,
+            currentNumber: evaluated,
+          });
+        }
+      }
     }
-    this.setState({
-      lastPressed: innerText,
-    });
   };
 
   render() {
-    const { currentNumber } = this.state;
+    const { currentNumber, calc, operation } = this.state;
     return (
       <div className="calculator">
+        <p className="pStyle">{JSON.stringify(this.state)}</p>
         <div className="display" id="display">
+          <small>
+            {calc} {operation}
+          </small>
           {currentNumber}
         </div>
 
