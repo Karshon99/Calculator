@@ -64,7 +64,10 @@ class App extends React.Component {
             ex = `${calc}${innerText}`;
           }
         } else {
-          ex = calc === "0" ? innerText : calc + innerText;
+          ex =
+            calc === "0"
+              ? innerText
+              : (lastPressed === "=" ? "" : calc) + innerText;
         }
 
         newState.calc = ex;
