@@ -82,7 +82,6 @@ class App extends React.Component {
     const { calc } = this.state;
     return (
       <div className="calculator">
-        <p className="pStyle">{JSON.stringify(this.state)}</p>
         <div className="display" id="display">
           {calc}
         </div>
