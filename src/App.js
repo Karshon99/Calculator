@@ -1,5 +1,7 @@
 import "./App.css";
 import React from "react";
+import { evaluate } from "mathjs";
+
 const numbers = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0];
 const operations = [, "+", "-", "/", "*"];
 const ids = {
@@ -25,20 +27,19 @@ class App extends React.Component {
     operation: undefined,
   };
   handleClick = (e) => {
+    const newState = {};
+
     const { calc, lastPressed } = this.state;
     const { innerText } = e.target;
     switch (innerText) {
       case "AC": {
-        this.setState({
-          calc: "0",
-        });
+        newState.calc = "0";
+
         break;
       }
       case "=": {
-        const evaluated = eval(calc);
-        this.setState({
-          calc: evaluated.toString(),
-        });
+        const evaluated = evaluate(calc);
+        newState.calc = evaluated.toString();
         break;
       }
       case ".": {
@@ -46,33 +47,32 @@ class App extends React.Component {
         const last = splitted.slice(-1)[0];
 
         if (!last.includes(".")) {
-          this.setState({
-            calc: calc + ".",
-          });
+          newState.calc = calc + ".";
         }
         break;
       }
-      default:
-        {
-          let ex = undefined;
-          if (operations.includes(innerText)) {
-            if (operations.includes(lastPressed) && innerText !== "-") {
-              ex = calc.slice(0, -3) + ` ${innerText} `;
-            } else {
-              ex = `${calc} ${innerText} `;
-            }
+      default: {
+        let ex = undefined;
+        if (operations.includes(innerText)) {
+          if (operations.includes(lastPressed) && innerText !== "-") {
+            const lastNumberIdx = calc
+              .split("")
+              .reverse()
+              .findIndex((char) => char !== " " && numbers.includes(+char));
+            ex = calc.slice(0, calc.length - lastNumberIdx) + `${innerText}`;
           } else {
-            ex = calc === "0" ? innerText : calc + innerText;
+            ex = `${calc}${innerText}`;
           }
-
-          this.setState({
-            calc: ex,
-          });
+        } else {
+          ex = calc === "0" ? innerText : calc + innerText;
         }
-        this.setState({
-          lastPressed: innerText,
-        });
+
+        newState.calc = ex;
+        break;
+      }
     }
+    newState.lastPressed = innerText;
+    this.setState(newState);
   };
 
   render() {
