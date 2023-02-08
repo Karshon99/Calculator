@@ -3,7 +3,7 @@ import React from "react";
 import { evaluate } from "mathjs";
 
 const numbers = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0];
-const operations = [, "+", "-", "/", "*"];
+const operations = ["+", "-", "/", "*"];
 const ids = {
   7: "seven",
   8: "eight",
@@ -43,7 +43,7 @@ class App extends React.Component {
         break;
       }
       case ".": {
-        const splitted = calc.split(/[+\-\*\/]/);
+        const splitted = calc.split(/[+\-*/]/);
         const last = splitted.slice(-1)[0];
 
         if (!last.includes(".")) {
